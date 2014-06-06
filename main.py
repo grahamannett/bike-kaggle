@@ -43,7 +43,7 @@ def submitdata(predictions,test2):
 	submit = pd.concat([keep,predicted_probs],axis=1)
 	submit.columns=['datetime','count']
 	submit.to_csv('data/submission.csv',index=False)
-
+# 
 
 data = pd.read_csv('data/train.csv')
 test = pd.read_csv('data/test.csv')
