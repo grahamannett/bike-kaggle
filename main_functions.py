@@ -8,7 +8,7 @@ from pandas.tools.plotting import scatter_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn import svm
+from sklearn import svm, tree
 from sklearn.linear_model import BayesianRidge, LinearRegression
 import statsmodels.formula.api as smf
 
@@ -71,6 +71,39 @@ def rforest(df, test, est=5):
     print(forest.feature_importances_)
     submit.columns=['datetime','count']
     submit.to_csv('data/submission.csv',index=False)
+
+def dec_tree_reg(df, test):
+    dt = tree.ExtraTreeRegressor()
+    #set target, train and test. train and test must have same number of features
+    target = df['count']
+    train  = df[['time','holiday','season','temp','atemp','windspeed','weather','humidity']]
+    test   = test2[['time','holiday','season','temp','atemp','windspeed','weather','humidity']]
+    dt.fit(train,target)
+
+
+    predicted_probs = dt.predict(test)
+    predicted_probs = pd.Series(predicted_probs)
+    predicted_probs = predicted_probs.map(lambda x: int(x))
+
+    keep = pd.read_csv('data/test.csv')
+    keep = keep['datetime']
+    #save to file
+    submit = pd.concat([keep,predicted_probs],axis=1)
+    # print(forest.feature_importances_)
+    submit.columns=['datetime','count']
+    submit.to_csv('data/submissiondtree.csv',index=False)
+
+    plt.figure()
+    # pl.scatter(tr, y, c="k", label="data")
+    plt.plot(train['time'], target, c="g", label="max_depth=2", linewidth=2)
+    plt.plot(test['time'], predicted_probs, c="r", label="max_depth=5", linewidth=2)
+    plt.xlabel("data")
+    plt.ylabel("target")
+    plt.title("Decision Tree Regression")
+    plt.legend()
+    plt.show()
+
+dec_tree_reg(data,test2)
 
 # rforest(data, test2 ,1000)
 

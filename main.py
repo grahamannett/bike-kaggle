@@ -59,6 +59,8 @@ def submitdata(pred,test2,name='submission'):
     submit.columns=['datetime','count']
     submit.to_csv('data/'+name+'.csv',index=False)
 
+def singletree(train, target, test):
+    X = train['time',]
     
 #this removes warning that will otherwise come about
 pd.options.mode.chained_assignment = None
